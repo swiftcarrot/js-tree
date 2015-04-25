@@ -1,0 +1,25 @@
+{
+  "name": "@adjusted/tree",
+  "version": "1.0.0",
+  "description": "Tree structure in javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wangzuo/tree.js.git"
+  },
+  "keywords": [
+    "tree"
+  ],
+  "author": "Wang Zuo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wangzuo/tree.js/issues"
+  },
+  "homepage": "https://github.com/wangzuo/tree.js",
+  "devDependencies": {
+    "mocha": "^2.2.4"
+  }
+}
