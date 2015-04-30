@@ -1,51 +1,50 @@
-var _empty = {module: 'root', children: []};
-
-function Tree(root) {
-  root = root || _empty;
-  this.root = root.module ? root : _empty;
-  this.nodes = {};
-  this.populate();
+function Tree(obj) {
+  this.obj = obj;
+  this.indexes = {};
+  this.build();
 }
 
 var proto = Tree.prototype;
 
-proto.populate = function() {
+proto.build = function() {
+  var obj = this.obj;
+  var indexes = this.indexes;
   var startId = 1;
-  var nodes = this.nodes;
-  var root = this.root;
 
-  // root
-  nodes[startId+''] = root;
-  root.id = startId++;
-  root.collapsed = false;
-  root.data = root.data || {};
+  var index = {id: startId, node: obj};
+  indexes[startId+''] = index;
+  startId++;
 
-  walk(root.children, root);
+  walk(obj.children, index);
 
-  function walk(children, parent) {
-    children.forEach(function(node, i) {
-      node.id = startId;
-      node.data = node.data || {};
-      node.children = node.children || [];
+  function walk(objs, parent) {
+    var children = [];
+    objs.forEach(function(obj, i) {
+      var index = {};
+      index.id = startId;
+      index.node = obj;
 
-      if(parent) node.parentId = parent.id;
+      if(parent) index.parent = parent.id;
 
-      nodes[startId+''] = node;
+      indexes[startId+''] = index;
+      children.push(startId);
       startId++;
 
-      if(node.children && node.children.length) {
-        walk(node.children, node);
-      }
+      if(obj.children && obj.children.length) walk(obj.children, index);
+    });
+    parent.children = children;
 
-      if(i > 0) node.prev = children[i-1].id;
-      if(i < children.length-1) node.next = children[i+1].id;
+    children.forEach(function(id, i) {
+      var index = indexes[id+''];
+      if(i > 0) index.prev = children[i-1];
+      if(i < children.length-1) index.next = children[i+1];
     });
   }
 };
 
 proto.walk = function(fn) {
-  var root = fn(this.root);
-  walk(root.children, fn, root);
+  var json = fn(this.json);
+  walk(json.children, fn, json);
 
   function walk(children, fn, parent) {
     children.forEach(function(node) {
@@ -127,6 +126,10 @@ proto.move = function(fromId, toId, placement) {
       this.append(node, toId);
     }
   }
+};
+
+proto.toJSON = function() {
+  return this.obj;
 };
 
 module.exports = Tree;
