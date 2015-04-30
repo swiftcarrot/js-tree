@@ -1,20 +1,22 @@
 var assert = require('assert');
 var Tree = require('./index');
 
+function _tree() {
+  return new Tree({
+    module: 'root',
+    children: [{
+      module: 'a',
+      children: [{module: 'c'}]
+    }, {
+      module: 'b'
+    }]
+  });
+}
+
 describe('tree.js', function() {
-  it('builds indexes correctly', function() {
-    var obj = {
-      module: 'root',
-      children: [{
-        module: 'a',
-        children: [{
-          module: 'c'
-        }]
-      }, {
-        module: 'b'
-      }]
-    };
-    var tree = new Tree(obj);
+  it('build()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
     var indexes = tree.indexes;
 
     assert.deepEqual(indexes['1'], {
@@ -42,6 +44,124 @@ describe('tree.js', function() {
       parent: 1,
       node: obj.children[1],
       prev: 2
+    });
+  });
+
+  it('get()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    assert.deepEqual(tree.get(1), obj);
+    assert.deepEqual(tree.get(10), null);
+  });
+
+  it('remove()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    var node = tree.remove(3);
+    assert.deepEqual(node, {module: 'c'});
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'a',
+        children: []
+      }, {module: 'b'}]
+    });
+  });
+
+  it('insert()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    tree.insert({module: 'd'}, 3, 0);
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'a',
+        children: [{
+          module: 'c',
+          children: [{module: 'd'}]
+        }]
+      }, {module: 'b'}]
+    });
+  });
+
+  it('insertBefore()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    tree.insertBefore({module: 'd'}, 3);
+
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'a',
+        children: [
+          {module: 'd'},
+          {module: 'c'}
+        ]
+      }, {module: 'b'}]
+    });
+  });
+
+  it('insertAfter()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    tree.insertAfter({module: 'd'}, 3);
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'a',
+        children: [
+          {module: 'c'},
+          {module: 'd'}
+        ]
+      }, {module: 'b'}]
+    });
+  });
+
+  it('prepend()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    tree.prepend({module: 'd'}, 1);
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'd'
+      }, {
+        module: 'a',
+        children: [{module: 'c'}]
+      }, {
+        module: 'b'
+      }]
+    });
+  });
+
+  it('append()', function() {
+    var tree = _tree();
+    var obj = tree.obj;
+    var indexes = tree.indexes;
+
+    tree.append({module: 'd'}, 1);
+    assert.deepEqual(obj, {
+      module: 'root',
+      children: [{
+        module: 'a',
+        children: [{module: 'c'}]
+      }, {
+        module: 'b'
+      }, {
+        module: 'd'
+      }]
     });
   });
 });

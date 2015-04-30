@@ -1,4 +1,5 @@
 function Tree(obj) {
+  this.cnt = 1;
   this.obj = obj;
   this.indexes = {};
   this.build();
@@ -40,96 +41,93 @@ proto.build = function() {
       if(i < children.length-1) index.next = children[i+1];
     });
   }
+
+  this.cnt = startId;
 };
 
-proto.walk = function(fn) {
-  var json = fn(this.json);
-  walk(json.children, fn, json);
+proto.getIndex = function(id) {
+  var index = this.indexes[id+''];
+  if(index) return index;
+};
 
-  function walk(children, fn, parent) {
-    children.forEach(function(node) {
-      var node = fn(node, parent);
-      if(node.children && node.children.length) {
-        walk(node.children, fn, node);
-      }
-    });
-  }
+proto.deleteIndex = function(id) {
+  delete this.indexes[id+''];
 };
 
 proto.get = function(id) {
-  return this.nodes[id+''];
+  var index = this.getIndex(id);
+  if(index && index.node) return index.node;
+  return null;
 };
 
 proto.remove = function(id) {
+  var index = this.getIndex(id);
   var node = this.get(id);
-  var parent = this.get(node.parentId);
-  parent.children.splice(parent.children.indexOf(node), 1);
+  var parentIndex = this.getIndex(index.parent);
+  var parentNode = this.get(index.parent);
+  parentNode.children.splice(parentNode.children.indexOf(node), 1);
+  parentIndex.children.splice(parentIndex.children.indexOf(id), 1);
+  this.deleteIndex(id);
+  this.updateChildren(parentIndex.children);
+
   return node;
 };
 
-proto.insertBefore = function(node, destId) {
-  var dest = this.get(destId);
-  var toId = dest.parentId;
-  var index = this.get(toId).children.indexOf(dest);
-  this.insert(node, toId, index);
+proto.createIndex = function(obj) {
+  var index = {
+    id: this.cnt,
+    node: obj
+  };
+  this.indexes[this.cnt+''] = index;
+  this.cnt++;
+  return index;
 };
 
-proto.insertAfter = function(node, destId) {
-  var dest = this.get(destId);
-  var toId = dest.parentId;
-  var index = this.get(toId).children.indexOf(dest);
-  this.insert(node, toId, index+1);
+proto.updateChildren = function(children) {
+  children.forEach(function(id, i) {
+    var index = this.getIndex(id);
+    if(i > 0) index.prev = children[i-1];
+    if(i < children.length-1) index.next = children[i+1];
+  }.bind(this));
 };
 
-proto.prepend = function(node, destId) {
-  this.insert(node, destId, 0);
+proto.insert = function(obj, parentId, i) {
+  var parentIndex = this.getIndex(parentId);
+  var parentNode = this.get(parentId);
+
+  var index = this.createIndex(obj);
+  index.parent = parentId;
+
+  parentNode.children = parentNode.children || [];
+  parentIndex.children = parentIndex.children || [];
+
+  parentNode.children.splice(i, 0, obj);
+  parentIndex.children.splice(i, 0, index.id);
+
+  this.updateChildren(parentIndex.children);
 };
 
-proto.append = function(node, destId) {
-  var dest = this.get(destId);
-  this.insert(node, destId, dest.children.length);
+proto.insertBefore = function(obj, destId) {
+  var destIndex = this.getIndex(destId);
+  var parentId = destIndex.parent;
+  var i = this.getIndex(parentId).children.indexOf(destId);
+  this.insert(obj, parentId, i);
 };
 
-proto.insert = function(node, toId, index) {
-  var parent = this.get(toId);
-  var children = parent.children;
-  node.parentId = toId;
-  children.splice(index, 0, node);
-
-  if(index > 0) node.prev = children[index-1].id;
-  else node.prev = null;
-
-  if(index < children.length-1) node.next = children[index+1].id;
-  else node.next = null;
+proto.insertAfter = function(obj, destId) {
+  var destIndex = this.getIndex(destId);
+  var parentId = destIndex.parent;
+  var i = this.getIndex(parentId).children.indexOf(destId);
+  this.insert(obj, parentId, i+1);
 };
 
-proto.move = function(fromId, toId, placement) {
-  var from = this.get(fromId);
-  var to = this.get(toId);
-
-  if(fromId !== toId && toId !== 1) {
-    var node = this.remove(fromId);
-
-    if(placement === 'before') {
-      this.insertBefore(node, toId);
-    }
-
-    if(placement === 'after') {
-      this.insertAfter(node, toId);
-    }
-
-    if(placement === 'prepend') {
-      this.prepend(node, toId);
-    }
-
-    if(placement === 'append') {
-      this.append(node, toId);
-    }
-  }
+proto.prepend = function(obj, destId) {
+  this.insert(obj, destId, 0);
 };
 
-proto.toJSON = function() {
-  return this.obj;
+proto.append = function(obj, destId) {
+  var destIndex = this.getIndex(destId);
+  this.insert(obj, destId, destIndex.children.length);
 };
 
 module.exports = Tree;
