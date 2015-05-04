@@ -86,6 +86,7 @@ proto.createIndex = function(obj) {
 proto.updateChildren = function(children) {
   children.forEach(function(id, i) {
     var index = this.getIndex(id);
+    index.prev = index.next = null;
     if(i > 0) index.prev = children[i-1];
     if(i < children.length-1) index.next = children[i+1];
   }.bind(this));
@@ -105,6 +106,9 @@ proto.insert = function(obj, parentId, i) {
   parentIndex.children.splice(i, 0, index.id);
 
   this.updateChildren(parentIndex.children);
+  if(parentIndex.parent) {
+    this.updateChildren(this.getIndex(parentIndex.parent).children);
+  }
 };
 
 proto.insertBefore = function(obj, destId) {
@@ -127,6 +131,7 @@ proto.prepend = function(obj, destId) {
 
 proto.append = function(obj, destId) {
   var destIndex = this.getIndex(destId);
+  destIndex.children = destIndex.children || [];
   this.insert(obj, destId, destIndex.children.length);
 };
 
