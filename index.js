@@ -50,8 +50,18 @@ proto.getIndex = function(id) {
   if(index) return index;
 };
 
-proto.deleteIndex = function(id) {
-  delete this.indexes[id+''];
+proto.removeIndex = function(index) {
+  var self = this;
+  del(index);
+
+  function del(index) {
+    delete self.indexes[index.id+''];
+    if(index.children && index.children.length) {
+      index.children.forEach(function(child) {
+        del(self.getIndex(child));
+      });
+    }
+  }
 };
 
 proto.get = function(id) {
@@ -67,7 +77,7 @@ proto.remove = function(id) {
   var parentNode = this.get(index.parent);
   parentNode.children.splice(parentNode.children.indexOf(node), 1);
   parentIndex.children.splice(parentIndex.children.indexOf(id), 1);
-  this.deleteIndex(id);
+  this.removeIndex(index);
   this.updateChildren(parentIndex.children);
 
   return node;

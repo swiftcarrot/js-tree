@@ -61,15 +61,14 @@ describe('tree.js', function() {
     var obj = tree.obj;
     var indexes = tree.indexes;
 
-    var node = tree.remove(3);
-    assert.deepEqual(node, {module: 'c'});
+    var node = tree.remove(2);
+    assert.deepEqual(node, {module: 'a', children: [{module: 'c'}]});
     assert.deepEqual(obj, {
       module: 'root',
-      children: [{
-        module: 'a',
-        children: []
-      }, {module: 'b'}]
+      children: [{module: 'b'}]
     });
+    assert.strictEqual(tree.getIndex(2), undefined);
+    assert.strictEqual(tree.getIndex(3), undefined);
   });
 
   it('insert()', function() {
