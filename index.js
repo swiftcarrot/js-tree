@@ -99,30 +99,32 @@ proto.insert = function(obj, parentId, i) {
   if(parentIndex.parent) {
     this.updateChildren(this.getIndex(parentIndex.parent).children);
   }
+
+  return index;
 };
 
 proto.insertBefore = function(obj, destId) {
   var destIndex = this.getIndex(destId);
   var parentId = destIndex.parent;
   var i = this.getIndex(parentId).children.indexOf(destId);
-  this.insert(obj, parentId, i);
+  return this.insert(obj, parentId, i);
 };
 
 proto.insertAfter = function(obj, destId) {
   var destIndex = this.getIndex(destId);
   var parentId = destIndex.parent;
   var i = this.getIndex(parentId).children.indexOf(destId);
-  this.insert(obj, parentId, i+1);
+  return this.insert(obj, parentId, i+1);
 };
 
 proto.prepend = function(obj, destId) {
-  this.insert(obj, destId, 0);
+  return this.insert(obj, destId, 0);
 };
 
 proto.append = function(obj, destId) {
   var destIndex = this.getIndex(destId);
   destIndex.children = destIndex.children || [];
-  this.insert(obj, destId, destIndex.children.length);
+  return this.insert(obj, destId, destIndex.children.length);
 };
 
 module.exports = Tree;
