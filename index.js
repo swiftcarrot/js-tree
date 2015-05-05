@@ -2,34 +2,34 @@ function Tree(obj) {
   this.cnt = 1;
   this.obj = obj;
   this.indexes = {};
-  this.build();
+  this.build(this.obj);
 }
 
 var proto = Tree.prototype;
 
-proto.build = function() {
-  var obj = this.obj;
+proto.build = function(obj) {
   var indexes = this.indexes;
-  var startId = 1;
+  var startId = this.cnt;
+  var self = this;
 
   var index = {id: startId, node: obj};
-  indexes[startId+''] = index;
-  startId++;
+  indexes[this.cnt+''] = index;
+  this.cnt++;
 
-  walk(obj.children, index);
+  if(obj.children && obj.children.length) walk(obj.children, index);
 
   function walk(objs, parent) {
     var children = [];
     objs.forEach(function(obj, i) {
       var index = {};
-      index.id = startId;
+      index.id = self.cnt;
       index.node = obj;
 
       if(parent) index.parent = parent.id;
 
-      indexes[startId+''] = index;
-      children.push(startId);
-      startId++;
+      indexes[self.cnt+''] = index;
+      children.push(self.cnt);
+      self.cnt++;
 
       if(obj.children && obj.children.length) walk(obj.children, index);
     });
@@ -42,7 +42,7 @@ proto.build = function() {
     });
   }
 
-  this.cnt = startId;
+  return index;
 };
 
 proto.getIndex = function(id) {
@@ -73,16 +73,6 @@ proto.remove = function(id) {
   return node;
 };
 
-proto.createIndex = function(obj) {
-  var index = {
-    id: this.cnt,
-    node: obj
-  };
-  this.indexes[this.cnt+''] = index;
-  this.cnt++;
-  return index;
-};
-
 proto.updateChildren = function(children) {
   children.forEach(function(id, i) {
     var index = this.getIndex(id);
@@ -96,7 +86,7 @@ proto.insert = function(obj, parentId, i) {
   var parentIndex = this.getIndex(parentId);
   var parentNode = this.get(parentId);
 
-  var index = this.createIndex(obj);
+  var index = this.build(obj);
   index.parent = parentId;
 
   parentNode.children = parentNode.children || [];
