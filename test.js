@@ -14,6 +14,11 @@ function _tree() {
 }
 
 describe('tree.js', function() {
+  it('empty json', function() {
+    var tree = new Tree();
+    assert.deepEqual(tree.obj, {});
+  });
+
   it('build()', function() {
     var tree = _tree();
     var obj = tree.obj;
