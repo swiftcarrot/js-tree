@@ -1,6 +1,6 @@
 {
-  "name": "@adjusted/tree",
-  "version": "1.1.5",
+  "name": "js-tree",
+  "version": "1.0.0",
   "description": "Tree structure in javascript",
   "main": "index.js",
   "scripts": {
