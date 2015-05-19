@@ -1,6 +1,6 @@
 function Tree(obj) {
   this.cnt = 1;
-  this.obj = obj || {};
+  this.obj = obj || {children:[]};
   this.indexes = {};
   this.build(this.obj);
 }

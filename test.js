@@ -16,7 +16,7 @@ function _tree() {
 describe('tree.js', function() {
   it('empty json', function() {
     var tree = new Tree();
-    assert.deepEqual(tree.obj, {});
+    assert.deepEqual(tree.obj, {children:[]});
   });
 
   it('build()', function() {
