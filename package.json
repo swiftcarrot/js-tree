@@ -4,15 +4,15 @@
   "description": "Tree structure in javascript",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "build":
+      "rm -rf dist && babel src --out-dir dist --ignore '__tests__/*.js'",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wangzuo/js-tree.git"
   },
-  "keywords": [
-    "tree"
-  ],
+  "keywords": ["tree"],
   "author": "Wang Zuo",
   "license": "MIT",
   "bugs": {
@@ -20,6 +20,15 @@
   },
   "homepage": "https://github.com/wangzuo/tree.js",
   "devDependencies": {
-    "mocha": "^3.2.0"
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^21.0.2",
+    "babel-preset-env": "^1.6.0",
+    "jest": "^21.1.0"
+  },
+  "jest": {
+    "collectCoverageFrom": ["src/**/*.js"]
+  },
+  "babel": {
+    "presets": ["env"]
   }
 }
