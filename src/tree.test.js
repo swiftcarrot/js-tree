@@ -21,6 +21,57 @@ describe('Tree', function() {
     expect(tree.obj).toEqual({ children: [] });
   });
 
+  it('custom childNodeName', function() {
+    let tree = new Tree(null, 'properties');
+    expect(tree.obj).toEqual({ properties: [] });
+
+    tree = new Tree(
+      {
+        propName: 'root',
+        properties: [
+          {
+            propName: 'a',
+            properties: [{ propName: 'c' }]
+          },
+          {
+            propName: 'b'
+          }
+        ]
+      },
+      'properties'
+    );
+
+    const obj = tree.obj;
+    const indexes = tree.indexes;
+
+    expect(indexes['1']).toEqual({
+      id: 1,
+      node: obj,
+      properties: [2, 4]
+    });
+
+    expect(indexes['2']).toEqual({
+      id: 2,
+      parent: 1,
+      properties: [3],
+      node: obj.properties[0],
+      next: 4
+    });
+
+    expect(indexes['3']).toEqual({
+      id: 3,
+      parent: 2,
+      node: obj.properties[0].properties[0]
+    });
+
+    expect(indexes['4']).toEqual({
+      id: 4,
+      parent: 1,
+      node: obj.properties[1],
+      prev: 2
+    });
+  });
+
   it('#build', function() {
     const tree = createTree();
     const obj = tree.obj;
