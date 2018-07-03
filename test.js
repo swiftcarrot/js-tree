@@ -1,4 +1,4 @@
-import Tree from './tree';
+import Tree from './src/tree';
 
 function createTree() {
   return new Tree({

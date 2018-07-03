@@ -4,8 +4,8 @@
   "description": "Tree structure in javascript",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && babel src --out-dir dist --ignore '*.test.js'",
-    "test": "jest --coverage",
+    "build": "rm -rf dist && babel src --out-dir dist",
+    "test": "flow && jest --coverage",
     "pretest": "npm run build",
     "prepublish": "npm test"
   },
@@ -23,10 +23,14 @@
   },
   "homepage": "https://github.com/wangzuo/tree.js",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-jest": "^21.0.2",
-    "babel-preset-env": "^1.6.0",
-    "jest": "^21.1.0"
+    "@babel/cli": "^7.0.0-beta.51",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/preset-flow": "^7.0.0-beta.51",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^23.0.1",
+    "flow-bin": "^0.75.0",
+    "jest": "^23.1.0"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -35,7 +39,8 @@
   },
   "babel": {
     "presets": [
-      "env"
+      "@babel/preset-env",
+      "@babel/preset-flow"
     ]
   }
 }
