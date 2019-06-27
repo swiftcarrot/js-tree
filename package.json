@@ -11,17 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wangzuo/js-tree.git"
+    "url": "git+https://github.com/swiftcarrot/js-tree.git"
   },
-  "keywords": [
-    "tree"
-  ],
+  "keywords": ["tree"],
   "author": "Wang Zuo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wangzuo/tree.js/issues"
+    "url": "https://github.com/swiftcarrot/js-tree/issues"
   },
-  "homepage": "https://github.com/wangzuo/tree.js",
+  "homepage": "https://github.com/swiftcarrot/js-tree",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-jest": "^21.0.2",
@@ -29,13 +27,9 @@
     "jest": "^21.1.0"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ]
+    "collectCoverageFrom": ["src/**/*.js"]
   },
   "babel": {
-    "presets": [
-      "env"
-    ]
+    "presets": ["env"]
   }
 }
